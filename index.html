@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>FirstWave Compliance Mapping Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f8f9fa;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .filters {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        select {
+            padding: 8px;
+            font-size: 14px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #e9ecef;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>FirstWave Compliance Mapping Dashboard</h1>
+    <div class="filters">
+        <div>
+            <label for="frameworkSelect">Framework:</label>
+            <select id="frameworkSelect">
+                <option value="All">All</option>
+            </select>
+        </div>
+        <div>
+            <label for="productSelect">Product:</label>
+            <select id="productSelect">
+                <option value="All">All</option>
+            </select>
+        </div>
+    </div>
+    <table id="mappingTable">
+        <thead>
+            <tr>
+                <th>Framework</th>
+                <th>Control</th>
+                <th>Product</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <script>
+        // Data mapping array.  Each entry links a framework control to a FirstWave product with a brief description.
+        const mappingData = [
+            { framework: "CIS", control: "1. Inventory and Control of Enterprise Assets", product: "Open-AudIT", description: "Maintains hardware inventory and integrates with vulnerability assessment tools." },
+            { framework: "CIS", control: "2. Inventory and Control of Software Assets", product: "Open-AudIT", description: "Maintains software inventory and monitors installed applications." },
+            { framework: "CIS", control: "4. Secure Configuration of Enterprise Assets and Software", product: "opConfig", description: "Backs up and manages configuration changes for network devices." },
+            { framework: "CIS", control: "8. Audit Log Management", product: "opEvents", description: "Collects, retains and alerts on logs from devices to support incident response." },
+            { framework: "CIS", control: "14. Security Awareness and Skills Training", product: "CyberCision", description: "Provides Phriendly Phishing training to improve security awareness." },
+            { framework: "CIS", control: "17. Incident Response Management", product: "opEvents", description: "Supports alerting and integration with service suites to manage incidents." },
+            { framework: "Essential Eight", control: "Patch Applications", product: "Open-AudIT", description: "Integrates with vulnerability assessment tools to identify missing patches." },
+            { framework: "Essential Eight", control: "Macro Settings", product: "CyberCision", description: "Filters malicious email attachments and web content to reduce macro exploitation." },
+            { framework: "Essential Eight", control: "Restrict Administrative Privileges", product: "STM", description: "Enforces per-user/per-host policies and rate control to limit admin privileges." },
+            { framework: "Essential Eight", control: "Restrict Administrative Privileges", product: "opEvents", description: "Provides log retention and alerting for privileged actions." },
+            { framework: "Essential Eight", control: "User Application Hardening", product: "CyberCision", description: "Controls web and email content and reduces exposure to malicious scripts." },
+            { framework: "NIST CSF", control: "Identify – Asset Management (ID.AM)", product: "Open-AudIT", description: "Maintains inventory of hardware and software assets for asset management." },
+            { framework: "NIST CSF", control: "Detect – Anomalies and Events (DE.AE)", product: "STM", description: "Provides real-time visibility and analytics for detecting anomalies." },
+            { framework: "ISO 27001", control: "Asset Management (5.9)", product: "Open-AudIT", description: "Provides inventory of hardware and software assets." },
+            { framework: "SOC 2", control: "Security (Common Criteria)", product: "CyberCision", description: "Secures web and email traffic to protect against malicious content." },
+        ];
+        // Populate filter dropdowns with distinct framework and product values
+        const frameworkSelect = document.getElementById('frameworkSelect');
+        const productSelect = document.getElementById('productSelect');
+        const tbody = document.getElementById('mappingTable').querySelector('tbody');
+        function populateDropdowns() {
+            const frameworks = new Set();
+            const products = new Set();
+            mappingData.forEach(item => {
+                frameworks.add(item.framework);
+                products.add(item.product);
+            });
+            frameworks.forEach(fw => {
+                const opt = document.createElement('option');
+                opt.value = fw;
+                opt.textContent = fw;
+                frameworkSelect.appendChild(opt);
+            });
+            products.forEach(prod => {
+                const opt = document.createElement('option');
+                opt.value = prod;
+                opt.textContent = prod;
+                productSelect.appendChild(opt);
+            });
+        }
+        // Render table rows based on selected filters
+        function renderTable() {
+            tbody.innerHTML = '';
+            const selectedFramework = frameworkSelect.value;
+            const selectedProduct = productSelect.value;
+            mappingData.forEach(item => {
+                if ((selectedFramework === 'All' || item.framework === selectedFramework) &&
+                    (selectedProduct === 'All' || item.product === selectedProduct)) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${item.framework}</td>
+                        <td>${item.control}</td>
+                        <td>${item.product}</td>
+                        <td>${item.description}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+        }
+        // Initialise page
+        populateDropdowns();
+        renderTable();
+        frameworkSelect.addEventListener('change', renderTable);
+        productSelect.addEventListener('change', renderTable);
+    </script>
+</body>
+</html>
